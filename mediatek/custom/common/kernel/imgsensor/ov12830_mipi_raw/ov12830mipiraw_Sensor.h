@@ -106,8 +106,8 @@ typedef struct
 	#define OV12830_PV_X_END						    			(2000) 
 	#define OV12830_PV_Y_END						    			(1500) 
 	
-	#define OV12830_VIDEO_X_START								(4)
-	#define OV12830_VIDEO_Y_START								(4)
+	#define OV12830_VIDEO_X_START								(2)
+	#define OV12830_VIDEO_Y_START								(2)
 	#define OV12830_VIDEO_X_END 									(2000)
 	#define OV12830_VIDEO_Y_END 									(1500)
 
@@ -123,6 +123,7 @@ typedef struct
 	/* SENSOR PIXEL/LINE NUMBERS IN ONE PERIOD */
 	#define OV12830_FULL_PERIOD_PIXEL_NUMS					(0x1100)  
 	#define OV12830_FULL_PERIOD_LINE_NUMS					(0xc00)
+
 
 	#define OV12830_PV_PERIOD_PIXEL_NUMS					(2816)
 	#define OV12830_PV_PERIOD_LINE_NUMS						(1949)	 
@@ -145,8 +146,13 @@ typedef struct
 	#define OV12830_IMAGE_SENSOR_FULL_INSERTED_PIXELS		4
 	#define OV12830_IMAGE_SENSOR_FULL_INSERTED_LINES		4
 
-#define OV12830MIPI_WRITE_ID 	(0x6C)
-#define OV12830MIPI_READ_ID	(0x6D)
+ //H/W SID is low.
+	#define OV12830MIPI_WRITE_ID 	(0x20)
+	#define OV12830MIPI_READ_ID	  (0x21)
+	
+ //H/W SID is high.
+	#define OV12830MIPI_WRITE_ID_1 	(0x6C)
+	#define OV12830MIPI_READ_ID_1	(0x6D)
 
 // SENSOR CHIP VERSION
 

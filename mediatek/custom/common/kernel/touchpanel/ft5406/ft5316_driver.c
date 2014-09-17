@@ -52,17 +52,13 @@
 //#include <mach/mt6575_boot.h>
 //#endif
 
-//#ifdef MT6577
-//#include <mach/mt6577_pm_ldo.h>
-//#include <mach/mt6577_typedefs.h>
-//#include <mach/mt6577_boot.h>
 #include <mach/mt_pm_ldo.h>
 #include <mach/mt_typedefs.h>
 #include <mach/mt_boot.h>
-#include <mach/upmu_common.h>
-//#endif
-
+#include <mach/eint.h>
 #include "cust_gpio_usage.h"
+
+#include <mach/upmu_common.h>
 
 //zhaoshaopeng add for ft driver firmware update 20120903 start
 #define FT_FM_UPDATE
@@ -88,19 +84,12 @@ static struct i2c_client *i2c_client = NULL;
 static struct task_struct *thread = NULL;
 
 static DECLARE_WAIT_QUEUE_HEAD(waiter);
+static DEFINE_MUTEX(i2c_access);
  
  
 static void tpd_eint_interrupt_handler(void);
  
  
- extern void mt65xx_eint_unmask(unsigned int line);
- extern void mt65xx_eint_mask(unsigned int line);
- extern void mt65xx_eint_set_hw_debounce(kal_uint8 eintno, kal_uint32 ms);
- extern kal_uint32 mt65xx_eint_set_sens(kal_uint8 eintno, kal_bool sens);
- extern void mt65xx_eint_registration(kal_uint8 eintno, kal_bool Dbounce_En,
-									  kal_bool ACT_Polarity, void (EINT_FUNC_PTR)(void),
-									  kal_bool auto_umask);
-
  
 static int __devinit tpd_probe(struct i2c_client *client, const struct i2c_device_id *id);
 static int tpd_detect(struct i2c_client *client, int kind, struct i2c_board_info *info);
@@ -486,7 +475,7 @@ static  void tpd_up(int x, int y,int *count) {
  
 	 do
 	 {
-	  mt65xx_eint_unmask(CUST_EINT_TOUCH_PANEL_NUM); 
+	  mt_eint_unmask(CUST_EINT_TOUCH_PANEL_NUM); 
 		 set_current_state(TASK_INTERRUPTIBLE); 
 		  wait_event_interruptible(waiter,tpd_flag!=0);
 						 
@@ -652,10 +641,8 @@ reset_proc:
     mt_set_gpio_pull_enable(GPIO_CTP_EINT_PIN, GPIO_PULL_ENABLE);
     mt_set_gpio_pull_select(GPIO_CTP_EINT_PIN, GPIO_PULL_UP);
  
-	  mt65xx_eint_set_sens(CUST_EINT_TOUCH_PANEL_NUM, CUST_EINT_TOUCH_PANEL_SENSITIVE);
-	  mt65xx_eint_set_hw_debounce(CUST_EINT_TOUCH_PANEL_NUM, CUST_EINT_TOUCH_PANEL_DEBOUNCE_CN);
-	  mt65xx_eint_registration(CUST_EINT_TOUCH_PANEL_NUM, CUST_EINT_TOUCH_PANEL_DEBOUNCE_EN, CUST_EINT_TOUCH_PANEL_POLARITY, tpd_eint_interrupt_handler, 1); 
-	  mt65xx_eint_unmask(CUST_EINT_TOUCH_PANEL_NUM);
+	mt_eint_registration(CUST_EINT_TOUCH_PANEL_NUM, CUST_EINT_TOUCH_PANEL_TYPE, tpd_eint_interrupt_handler, 1); 
+	mt_eint_unmask(CUST_EINT_TOUCH_PANEL_NUM);
  
 	msleep(100);
  
@@ -821,7 +808,7 @@ reset_proc:
     mt_set_gpio_out(GPIO_CTP_RST_PIN, GPIO_OUT_ONE);
     msleep(3);
 #endif
-   mt65xx_eint_unmask(CUST_EINT_TOUCH_PANEL_NUM);  
+   mt_eint_unmask(CUST_EINT_TOUCH_PANEL_NUM);  
 	
 	 return retval;
  }
@@ -832,7 +819,7 @@ reset_proc:
 	 static char data = 0x3;
  
 	 TPD_DEBUG("TPD enter sleep\n");
-	 mt65xx_eint_mask(CUST_EINT_TOUCH_PANEL_NUM);
+	 mt_eint_mask(CUST_EINT_TOUCH_PANEL_NUM);
 #ifdef TPD_CLOSE_POWER_IN_SLEEP	
 	hwPowerDown(TPD_POWER_SOURCE,"TP");
 #else

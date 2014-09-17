@@ -156,8 +156,8 @@ unsigned int DRAM_MRR(int MRR_num)
     print("Disable MRR read: 0x1E8:%x\n",DRAMC_READ_REG(0x01E8));
 
     /* reset infra*/
-    *(volatile unsigned *)(0x10001034) |= (1 << 0x2);
-    *(volatile unsigned *)(0x10001034) &= ~(1 << 0x2);
+    *(volatile unsigned *)(0x10001034) |= 0x2;
+    *(volatile unsigned *)(0x10001034) &= (~0x2);
 
 
 
@@ -1249,6 +1249,11 @@ unsigned int manu_id;
 print("[EMI] DDR%d\r\n", mt_get_dram_type ());
 index = mt_get_mdl_number ();
 print("[EMI] eMMC/NAND ID = %x,%x,%x,%x,%x,%x,%x,%x,%x\r\n", id[0], id[1], id[2], id[3], id[4], id[5], id[6], id[7], id[8]);
+if (0x1 == enable_combo_dis)
+{
+    manu_id = DRAM_MRR(0x5);
+    print("[EMI] manu_id = %x\r\n",manu_id); 
+}
 if (index < 0 || index >=  num_of_emi_records)
 {
     print("[EMI] setting failed 0x%x\r\n", index);
@@ -1313,7 +1318,7 @@ DRAMC_WRITE_REG(val2,0x1c4);
     val1 = (DRAMC_READ_REG(0x1E4) | (0x1 << 13));
     DRAMC_WRITE_REG(val1,0x1E4);
 #endif
-#if 1
+#if 0
     /* enable perbank refresh  */
     val1 = (DRAMC_READ_REG(0x110) | (0x1 << 7));
     DRAMC_WRITE_REG(val1,0x110);

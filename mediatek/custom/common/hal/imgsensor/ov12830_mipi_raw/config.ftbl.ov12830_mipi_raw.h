@@ -286,6 +286,12 @@ FTABLE_SCENE_INDEP()
                 MtkCameraParameters::CAPTURE_MODE_NORMAL, 
                 MtkCameraParameters::CAPTURE_MODE_FACE_BEAUTY, 
                 MtkCameraParameters::CAPTURE_MODE_CONTINUOUS_SHOT, 
+                MtkCameraParameters::CAPTURE_MODE_SMILE_SHOT, 
+                MtkCameraParameters::CAPTURE_MODE_BEST_SHOT, 
+                MtkCameraParameters::CAPTURE_MODE_EV_BRACKET_SHOT, 
+                MtkCameraParameters::CAPTURE_MODE_AUTO_PANORAMA_SHOT,
+                MtkCameraParameters::CAPTURE_MODE_MAV_SHOT,
+                MtkCameraParameters::CAPTURE_MODE_ASD_SHOT, 
             )
         ), 
     )

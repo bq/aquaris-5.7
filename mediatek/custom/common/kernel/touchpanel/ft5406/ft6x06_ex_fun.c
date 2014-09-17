@@ -47,7 +47,7 @@ int fts_ctpm_fw_upgrade(struct i2c_client *client, u8 *pbt_buf,
 static struct mutex g_device_mutex;
 
 static unsigned char CTPM_FW[] = {
-	#include "Malata_S570_5406_Byd0x59_Ver0x26_20131126_app.i"
+	#include "Malata_S570_5406_Byd0x59_Ver0x27_20140512_app.i"
 };
 
 /*

@@ -45,8 +45,8 @@
 #include "akm8963.h"
 #include <linux/hwmsen_helper.h>
 
-
-
+static DEFINE_MUTEX(akm8963_i2c_mutex);
+static DEFINE_MUTEX(akm8963_op_mutex);
 
 /*----------------------------------------------------------------------------*/
 #define DEBUG 0
@@ -104,6 +104,8 @@ static struct i2c_board_info __initdata i2c_akm8963={ I2C_BOARD_INFO("akm8963", 
 static int akm8963_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id); 
 static int akm8963_i2c_remove(struct i2c_client *client);
 static int akm8963_i2c_detect(struct i2c_client *client, struct i2c_board_info *info);
+static int akm8963_suspend(struct i2c_client *client, pm_message_t msg);
+static int akm8963_resume(struct i2c_client *client);
 static int akm_probe(struct platform_device *pdev);
 static int akm_remove(struct platform_device *pdev);
 
@@ -199,10 +201,11 @@ static long AKI2C_RxData(char *rxData, int length)
 	char addr = rxData[0];
 #endif
 
-
+	mutex_lock(&akm8963_i2c_mutex);
 	/* Caller should check parameter validity.*/
 	if((rxData == NULL) || (length < 1))
 	{
+		mutex_unlock(&akm8963_i2c_mutex);
 		return -EINVAL;
 	}
 
@@ -216,7 +219,7 @@ static long AKI2C_RxData(char *rxData, int length)
 		}
 		mdelay(10);
 	}
-	
+	mutex_unlock(&akm8963_i2c_mutex);
 	if(loop_i >= AKM8963_RETRY_COUNT)
 	{
 		printk(KERN_ERR "%s retry over %d\n", __func__, AKM8963_RETRY_COUNT);
@@ -245,10 +248,11 @@ static long AKI2C_TxData(char *txData, int length)
 	struct i2c_client *client = this_client;  
 	struct akm8963_i2c_data *data = i2c_get_clientdata(client);
 #endif
-
+	mutex_lock(&akm8963_i2c_mutex);
 	/* Caller should check parameter validity.*/
 	if ((txData == NULL) || (length < 2))
 	{
+		mutex_unlock(&akm8963_i2c_mutex);
 		return -EINVAL;
 	}
 
@@ -261,7 +265,7 @@ static long AKI2C_TxData(char *txData, int length)
 		}
 		mdelay(10);
 	}
-	
+	mutex_unlock(&akm8963_i2c_mutex);
 	if(loop_i >= AKM8963_RETRY_COUNT)
 	{
 		printk(KERN_ERR "%s retry over %d\n", __func__, AKM8963_RETRY_COUNT);
@@ -314,7 +318,7 @@ static long AKECS_SetMode_SelfTest(void)
 	
 	/* Set measure mode */
 	buffer[0] = AK8963_REG_CNTL1;
-	buffer[1] = AK8963_MODE_SELF_TEST;
+	buffer[1] = AK8963_MODE_SELF_TEST|1<<4;  //16 bit mode;
 	/* Set data */
 	return AKI2C_TxData(buffer, 2);
 }
@@ -412,10 +416,10 @@ static int AKECS_CheckDevice(void)
 		return ret;
 	}
 	/* Check read data */
-	if(buffer[0] != 0x48)
-	{
-		return -ENXIO;
-	}
+	//if(buffer[0] != 0x48)
+	//{
+	//	return -ENXIO;
+	//}
 	
 	return 0;
 }
@@ -519,7 +523,7 @@ static int AKECS_GetRawData(char *rbuf, int size)
 {
 	char strbuf[SENSOR_DATA_SIZE];
 	s16 data[3];
-	if(atomic_read(&open_flag) == 0)
+	if((atomic_read(&open_flag) == 0) || (factory_mode == 1))
 	{
 		AKECS_SetMode_SngMeasure();
 		msleep(10);
@@ -644,10 +648,12 @@ static int FctShipmntTestProcess_Body(void)
 	//***********************************************
 	
 	// Set to PowerDown mode 
-	if (AKECS_SetMode(AK8963_MODE_POWERDOWN) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
-		return 0;
-	}
+	//if (AKECS_SetMode(AK8963_MODE_POWERDOWN) < 0) {
+	//	AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+	//	return 0;
+	//}
+	AKECS_Reset(0);
+	msleep(1);
 	
 	// When the serial interface is SPI,
 	// write "00011011" to I2CDIS register(to disable I2C,).
@@ -750,7 +756,7 @@ static int FctShipmntTestProcess_Body(void)
 	//***********************************************
 	
 	// Set to SNG measurement pattern (Set CNTL register) 
-	if (AKECS_SetMode(AK8963_MODE_SNG_MEASURE) < 0) {
+	if (AKECS_SetMode(AK8963_MODE_SNG_MEASURE|1<<4) < 0) {
 		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
 		return 0;
 	}
@@ -788,7 +794,7 @@ static int FctShipmntTestProcess_Body(void)
 	}
 	
 	// Set to Self-test mode (Set CNTL register)
-	if (AKECS_SetMode(AK8963_MODE_SELF_TEST) < 0) {
+	if (AKECS_SetMode(AK8963_MODE_SELF_TEST|1<<4) < 0) {
 		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
 		return 0;
 	}
@@ -1489,7 +1495,9 @@ int akm8963_operate(void* self, uint32_t command, void* buff_in, int size_in,
 				{
 					akmd_delay = 20;
 				}
+				else{
 				akmd_delay = value;
+			}	
 			}	
 			break;
 
@@ -1594,7 +1602,9 @@ int akm8963_orientation_operate(void* self, uint32_t command, void* buff_in, int
 				{
 					akmd_delay = 20;
 				}
+				else{
 				akmd_delay = value;
+			}	
 			}	
 			break;
 

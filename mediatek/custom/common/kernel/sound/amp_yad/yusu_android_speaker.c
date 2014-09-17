@@ -1,39 +1,4 @@
 /*****************************************************************************
-*  Copyright Statement:
-*  --------------------
-*  This software is protected by Copyright and the information contained
-*  herein is confidential. The software may not be copied and the information
-*  contained herein may not be used or disclosed except with the written
-*  permission of MediaTek Inc. (C) 2009
-*
-*  BY OPENING THIS FILE, BUYER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
-*  THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
-*  RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO BUYER ON
-*  AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
-*  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
-*  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
-*  NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
-*  SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
-*  SUPPLIED WITH THE MEDIATEK SOFTWARE, AND BUYER AGREES TO LOOK ONLY TO SUCH
-*  THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. MEDIATEK SHALL ALSO
-*  NOT BE RESPONSIBLE FOR ANY MEDIATEK SOFTWARE RELEASES MADE TO BUYER'S
-*  SPECIFICATION OR TO CONFORM TO A PARTICULAR STANDARD OR OPEN FORUM.
-*
-*  BUYER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND CUMULATIVE
-*  LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
-*  AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
-*  OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY BUYER TO
-*  MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
-*
-*  THE TRANSACTION CONTEMPLATED HEREUNDER SHALL BE CONSTRUED IN ACCORDANCE
-*  WITH THE LAWS OF THE STATE OF CALIFORNIA, USA, EXCLUDING ITS CONFLICT OF
-*  LAWS PRINCIPLES.  ANY DISPUTES, CONTROVERSIES OR CLAIMS ARISING THEREOF AND
-*  RELATED THERETO SHALL BE SETTLED BY ARBITRATION IN SAN FRANCISCO, CA, UNDER
-*  THE RULES OF THE INTERNATIONAL CHAMBER OF COMMERCE (ICC).
-*
-*****************************************************************************/
-
-/*****************************************************************************
 *                E X T E R N A L      R E F E R E N C E S
 ******************************************************************************
 */
@@ -56,24 +21,10 @@
 #include <linux/delay.h>
 #include "yusu_android_speaker.h"
 
-#if defined(MT6575)
-#include <mach/mt_gpio.h>
-#include <mach/mt_typedefs.h>
-#include <mach/mt_clock_manager.h>
-#include <mach/mt_pmic_feature_api.h>
-#include <linux/pmic6326_sw.h>
 
-#elif defined(MT6577)
 #include <mach/mt_gpio.h>
 #include <mach/mt_typedefs.h>
-#include <mach/mt_clock_manager.h>
-#include <mach/mt_pmic_feature_api.h>
-#include <linux/pmic6326_sw.h>
 
-#elif defined(MT6589)
-#include <mach/mt_gpio.h>
-#include <mach/mt_typedefs.h>
-#endif
 /*****************************************************************************
 *                C O M P I L E R      F L A G S
 ******************************************************************************
@@ -111,9 +62,6 @@ bool Speaker_Init(void)
    PRINTK("+Speaker_Init Success");
    mt_set_gpio_mode(GPIO_SPEAKER_EN_PIN,GPIO_MODE_00);  // gpio mode
    mt_set_gpio_pull_enable(GPIO_SPEAKER_EN_PIN,GPIO_PULL_ENABLE);
-    mt_set_gpio_dir(GPIO_SPEAKER_EN_PIN,GPIO_DIR_OUT); // output
-    mt_set_gpio_out(GPIO_SPEAKER_EN_PIN,GPIO_OUT_ZERO); // low
-    msleep(SPK_WARM_UP_TIME);
    PRINTK("-Speaker_Init Success");
    return true;
 }
@@ -242,19 +190,16 @@ kal_int32 Sound_ExtFunction(const char* name, void* param, int param_size)
 	int funNum = -1;
 
 	//Search the supported function defined in ExtFunArray
-    while(strcmp("End",ExtFunArray[i]) != 0 )  		//while function not equal to "End"
-    {
+	while(strcmp("End",ExtFunArray[i]) != 0 ) {		//while function not equal to "End"
 
-        if (strcmp(name,ExtFunArray[i]) == 0 )  		//When function name equal to table, break
-        {
+	    if (strcmp(name,ExtFunArray[i]) == 0 ) {		//When function name equal to table, break
 	    	funNum = i;
 	    	break;
 	    }
 	    i++;
 	}
 
-    switch (funNum)
-    {
+	switch (funNum) {
 	    case 0:			//InfoMATVAudioStart
 	        printk("RunExtFunction InfoMATVAudioStart \n");
 	        break;

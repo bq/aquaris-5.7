@@ -185,20 +185,20 @@ const NVRAM_CAMERA_3A_STRUCT CAMERA_3A_NVRAM_DEFAULT_VALUE =
             TRUE,            // bEnableCaptureThres
             TRUE,            // bEnableVideoThres
             TRUE,            // bEnableStrobeThres
-            55,                // u4AETarget
-            57,                // u4StrobeAETarget
+            47,                // u4AETarget
+            47,                // u4StrobeAETarget
 
             50,                // u4InitIndex
             4,                 // u4BackLightWeight
             32,                // u4HistStretchWeight
             4,                 // u4AntiOverExpWeight
-            0,    // u4BlackLightStrengthIndex
-            4,    // u4HistStretchStrengthIndex
+            2,                 // u4BlackLightStrengthIndex
+            2,                 // u4HistStretchStrengthIndex
             2,                 // u4AntiOverExpStrengthIndex
             2,                 // u4TimeLPFStrengthIndex
             {1, 3, 5, 7, 8}, // u4LPFConvergeTable[AE_CCT_STRENGTH_NUM]
             90,                // u4InDoorEV = 9.0, 10 base
-            -3,               // i4BVOffset delta BV = -2.3
+            -10,               // i4BVOffset delta BV = -2.3
             64,                 // u4PreviewFlareOffset
             64,                 // u4CaptureFlareOffset
             3,                 // u4CaptureFlareThres
@@ -385,7 +385,7 @@ const NVRAM_CAMERA_3A_STRUCT CAMERA_3A_NVRAM_DEFAULT_VALUE =
     	{
 		8,	// i4RotationAngle					
 		254,	// i4Cos					
-            36    // i4Sin
+		36,	// i4Sin					
     	},
     	// Daylight locus parameter
     	{
@@ -445,10 +445,10 @@ const NVRAM_CAMERA_3A_STRUCT CAMERA_3A_NVRAM_DEFAULT_VALUE =
 		},
 		// Daylight Fluorescent
 		{
-            98,    // i4RightBound
-            -119,    // i4LeftBound
-            -365,    // i4UpperBound
-            -488    // i4LowerBound
+			0,	// i4RightBound
+			0,	// i4LeftBound
+			0,	// i4UpperBound
+			0	// i4LowerBound
     		}
     	},
     	// PWB light area
@@ -457,7 +457,7 @@ const NVRAM_CAMERA_3A_STRUCT CAMERA_3A_NVRAM_DEFAULT_VALUE =
     		{
 			458,	// i4RightBound				
 			-943,	// i4LeftBound				
-            0,    // i4UpperBound
+			-180,	// i4UpperBound				
 			-488	// i4LowerBound				
     		},
     		// Daylight
@@ -469,15 +469,15 @@ const NVRAM_CAMERA_3A_STRUCT CAMERA_3A_NVRAM_DEFAULT_VALUE =
     		},
     		// Cloudy daylight
     		{
-            223,    // i4RightBound
+			248,	// i4RightBound				
 			48,	// i4LeftBound				
 			-205,	// i4UpperBound				
 			-365	// i4LowerBound				
     		},
     		// Shade
     		{
-            323,    // i4RightBound
-            48,    // i4LeftBound
+			398,	// i4RightBound				
+			198,	// i4LeftBound				
 			-205,	// i4UpperBound				
 			-365	// i4LowerBound				
     		},
@@ -497,20 +497,19 @@ const NVRAM_CAMERA_3A_STRUCT CAMERA_3A_NVRAM_DEFAULT_VALUE =
     		},
     		// Warm fluorescent
     		{
-            -271,    // i4RightBound
+			-343,	// i4RightBound				
 			-471,	// i4LeftBound				
 			-235,	// i4UpperBound				
 			-488	// i4LowerBound				
     		},
     		// Incandescent
     		{
-            -271,    // i4RightBound
+			-343,	// i4RightBound				
 			-471,	// i4LeftBound				
 			-205,	// i4UpperBound				
 			-365	// i4LowerBound				
     		},
-            // Gray World
-            {
+            {// Gray World
             5000,    // i4RightBound
             -5000,    // i4LeftBound
             5000,    // i4UpperBound
@@ -527,15 +526,15 @@ const NVRAM_CAMERA_3A_STRUCT CAMERA_3A_NVRAM_DEFAULT_VALUE =
     		},
     		// Cloudy daylight
     		{
-            924,    // i4R
+			938,	// i4R				
 			512,	// i4G				
-            577    // i4B
+			567	// i4B				
     		},
     		// Shade
     		{
-            979,    // i4R
+			1114,	// i4R				
 			512,	// i4G				
-            535    // i4B
+			451	// i4B				
     		},
     		// Twilight
     		{
@@ -551,15 +550,15 @@ const NVRAM_CAMERA_3A_STRUCT CAMERA_3A_NVRAM_DEFAULT_VALUE =
     		},
     		// Warm fluorescent
     		{
-            581,    // i4R
+			557,	// i4R				
 			512,	// i4G				
-            1366    // i4B
+			1444	// i4B				
     		},
     		// Incandescent
     		{
-            517,    // i4R
+			496,	// i4R				
 			512,	// i4G				
-            1251    // i4B
+			1322	// i4B				
 		},
 		// Gray World
 		{
@@ -670,7 +669,7 @@ const NVRAM_CAMERA_3A_STRUCT CAMERA_3A_NVRAM_DEFAULT_VALUE =
 typedef NSFeature::RAWSensorInfo<SENSOR_ID> SensorInfoSingleton_T;
 
 
-namespace NSFeature { 
+namespace NSFeature {
 template <>
 UINT32
 SensorInfoSingleton_T::

@@ -1,3 +1,36 @@
+/*******************************************************************************
+ *
+ * Filename:
+ * ---------
+ * audio_volume_custom_default.h
+ *
+ * Project:
+ * --------
+ *   ALPS
+ *
+ * Description:
+ * ------------
+ * This file is the header of audio customization related parameters or definition.
+ *
+ * Author:
+ * -------
+ * Chipeng chang
+ *
+ *============================================================================
+ *             HISTORY
+ * Below this line, this part is controlled by CC/CQ. DO NOT MODIFY!!
+ *------------------------------------------------------------------------------
+ * $Revision:$
+ * $Modtime:$
+ * $Log:$
+ *
+ *
+ *
+ *
+ *------------------------------------------------------------------------------
+ * Upper this line, this part is controlled by CC/CQ. DO NOT MODIFY!!
+ *============================================================================
+ ****************************************************************************/
 #ifndef AUDIO_VOLUME_CUSTOM_DEFAULT_H
 #define AUDIO_VOLUME_CUSTOM_DEFAULT_H
 
@@ -27,9 +60,9 @@
 96, 112, 132, 136, 144, 152, 160
 
 #define AUD_VOLUME_SID \
-0, 0, 16, 0, 0, 0, 0,     \
-0, 0, 32, 0, 0, 0, 0,     \
-0, 0, 0, 0, 0, 0, 0
+     0,0,16,0,0,0,0,\ 
+     0,0,32,0,0,0,0,\ 
+     0,0,0,0,0,0,0
 
 #define AUD_VOLUME_MEDIA \
 112, 136, 160, 184, 208, 232, 255,     \

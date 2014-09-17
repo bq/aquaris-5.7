@@ -100,7 +100,7 @@ const NVRAM_CAMERA_3A_STRUCT CAMERA_3A_NVRAM_DEFAULT_VALUE =
             18,    // u4CapMaxFrameRate
             1024,   // u4Cap2PreRatio, 1024 base = 1x
             24,    // u4LensFno, Fno = 2.8
-            350    // u4FocusLength_100x
+            330    // u4FocusLength_100x
          },
          // rHistConfig
         {

@@ -115,15 +115,26 @@
 #include <mach/mt_pm_ldo.h>
 #endif
 
-#if ((defined MT6573) || (defined MT6575) || (defined MT6577) || (defined MT6589)  || (defined MT6572))	
-extern void mt65xx_eint_unmask(unsigned int line);
-extern void mt65xx_eint_mask(unsigned int line);
-extern void mt65xx_eint_set_polarity(kal_uint8 eintno, kal_bool ACT_Polarity);
-extern void mt65xx_eint_set_hw_debounce(kal_uint8 eintno, kal_uint32 ms);
-extern kal_uint32 mt65xx_eint_set_sens(kal_uint8 eintno, kal_bool sens);
-extern void mt65xx_eint_registration(kal_uint8 eintno, kal_bool Dbounce_En,
+#if ((defined MT6573) || (defined MT6575) || (defined MT6577) || (defined MT6589)  || (defined MT6572) || (defined MT6582))	
+/*
+extern void mt_eint_unmask(unsigned int line);
+extern void mt_eint_mask(unsigned int line);
+extern void mt_eint_set_polarity(kal_uint8 eintno, kal_bool ACT_Polarity);
+extern void mt_eint_set_hw_debounce(kal_uint8 eintno, kal_uint32 ms);
+extern kal_uint32 mt_eint_set_sens(kal_uint8 eintno, kal_bool sens);
+extern void mt_eint_registration(kal_uint8 eintno, kal_bool Dbounce_En,
                                      kal_bool ACT_Polarity, void (EINT_FUNC_PTR)(void),
                                      kal_bool auto_umask);
+*/
+
+extern void mt_eint_mask(unsigned int eint_num);
+extern void mt_eint_unmask(unsigned int eint_num);
+extern void mt_eint_set_hw_debounce(unsigned int eint_num, unsigned int ms);
+extern void mt_eint_set_polarity(unsigned int eint_num, unsigned int pol);
+extern unsigned int mt_eint_set_sens(unsigned int eint_num, unsigned int sens);
+extern void mt_eint_registration(unsigned int eint_num, unsigned int flow, void (EINT_FUNC_PTR)(void), unsigned int is_auto_umask);
+extern void mt_eint_print_status(void);
+
 
 #endif
 
@@ -1689,8 +1700,8 @@ static void stk3x1x_eint_work(struct work_struct *work)
 #ifdef MT6516
 	MT6516_EINTIRQUnmask(CUST_EINT_ALS_NUM);      
 #endif     
-#if ((defined MT6573) || (defined MT6575) || (defined MT6577) || (defined MT6589) || (defined MT6572))
-	mt65xx_eint_unmask(CUST_EINT_ALS_NUM);    
+#if ((defined MT6573) || (defined MT6575) || (defined MT6577) || (defined MT6589) || (defined MT6572) || (defined MT6582))	
+	mt_eint_unmask(CUST_EINT_ALS_NUM);    
 #endif	
 
 	return;
@@ -1700,8 +1711,8 @@ err_i2c_rw:
 #ifdef MT6516
 	MT6516_EINTIRQUnmask(CUST_EINT_ALS_NUM);      
 #endif     
-#if ((defined MT6573) || (defined MT6575) || (defined MT6577) || (defined MT6589) || (defined MT6572))
-	mt65xx_eint_unmask(CUST_EINT_ALS_NUM);    
+#if ((defined MT6573) || (defined MT6575) || (defined MT6577) || (defined MT6589) || (defined MT6572) || (defined MT6582))	
+	mt_eint_unmask(CUST_EINT_ALS_NUM);    
 #endif	
 	return;
 }
@@ -1728,12 +1739,23 @@ int stk3x1x_setup_eint(struct i2c_client *client)
 	MT6516_EINTIRQUnmask(CUST_EINT_ALS_NUM);  
 #endif
     
-#if ((defined MT6573) || (defined MT6575) || (defined MT6577) || (defined MT6589) || (defined MT6572))
-    mt65xx_eint_set_sens(CUST_EINT_ALS_NUM, CUST_EINT_ALS_SENSITIVE);
-	mt65xx_eint_set_polarity(CUST_EINT_ALS_NUM, CUST_EINT_ALS_POLARITY);
-	mt65xx_eint_set_hw_debounce(CUST_EINT_ALS_NUM, CUST_EINT_ALS_DEBOUNCE_CN);
-	mt65xx_eint_registration(CUST_EINT_ALS_NUM, CUST_EINT_ALS_DEBOUNCE_EN, CUST_EINT_ALS_POLARITY, stk3x1x_eint_func, 0);
-	mt65xx_eint_unmask(CUST_EINT_ALS_NUM);  
+#if ((defined MT6573) || (defined MT6575) || (defined MT6577) || (defined MT6589) || (defined MT6572) || (defined MT6582))	
+/*
+       mt_eint_set_sens(CUST_EINT_ALS_NUM, CUST_EINT_ALS_SENSITIVE);
+	mt_eint_set_polarity(CUST_EINT_ALS_NUM, CUST_EINT_ALS_POLARITY);
+	mt_eint_set_hw_debounce(CUST_EINT_ALS_NUM, CUST_EINT_ALS_DEBOUNCE_CN);
+	mt_eint_registration(CUST_EINT_ALS_NUM, CUST_EINT_ALS_DEBOUNCE_EN, CUST_EINT_ALS_POLARITY, stk3x1x_eint_func, 0);
+	mt_eint_unmask(CUST_EINT_ALS_NUM);  
+*/
+    mt_set_gpio_mode(GPIO_ALS_EINT_PIN, GPIO_ALS_EINT_PIN_M_EINT);
+    mt_set_gpio_dir(GPIO_ALS_EINT_PIN, GPIO_DIR_IN);
+    mt_set_gpio_pull_enable(GPIO_ALS_EINT_PIN, GPIO_PULL_ENABLE);
+    mt_set_gpio_pull_select(GPIO_ALS_EINT_PIN, GPIO_PULL_UP);
+
+	mt_eint_set_hw_debounce(CUST_EINT_ALS_NUM, CUST_EINT_ALS_DEBOUNCE_CN);
+	mt_eint_registration(CUST_EINT_ALS_NUM, CUST_EINT_ALS_TYPE, stk3x1x_eint_func, 0);
+
+	mt_eint_unmask(CUST_EINT_ALS_NUM);	
 #endif  	
     return 0;
 }

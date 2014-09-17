@@ -375,14 +375,14 @@ static void lcm_suspend(void)
 
 	data_array[0]=0x00280500; // Display Off
 	dsi_set_cmdq(data_array, 1, 1);
-	
+	MDELAY(150);	
 	data_array[0] = 0x00100500; // Sleep In
 	dsi_set_cmdq(data_array, 1, 1);
 
 	MDELAY(120);
-	SET_RESET_PIN(0);
-	MDELAY(50);		
 	SET_RESET_PIN(1);
+	MDELAY(50);		
+	SET_RESET_PIN(0);
 	MDELAY(20);	
 
 	
