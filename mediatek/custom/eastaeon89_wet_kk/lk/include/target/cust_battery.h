@@ -40,7 +40,7 @@ typedef struct{
 /* Charging Current Setting */
 #define USB_CHARGER_CURRENT					Cust_CC_450MA
 #define AC_CHARGER_CURRENT					Cust_CC_650MA	
-#define bq24158_AC_CHARGING_CURRENT_750 750
+#define bq24158_AC_CHARGING_CURRENT_950 950
 
 /* Battery Meter Solution */
 #define CONFIG_ADC_SOLUTION 	1
